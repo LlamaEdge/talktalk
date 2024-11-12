@@ -75,4 +75,4 @@
 
 ## Talk with TalkTalk
 
-  See [![TalkTalk Demo](https://img.youtube.com/vi/NFpLShcT7NM/0.jpg)](https://youtu.be/NFpLShcT7NM)
+  [![TalkTalk Demo](https://img.youtube.com/vi/NFpLShcT7NM/0.jpg)](https://youtu.be/NFpLShcT7NM)
