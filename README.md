@@ -1,7 +1,7 @@
 # TalkTalk (唠嗑)
 
 > [!NOTE]
-> This project is for experimental purposes.
+> This project is for experimental purposes. If you like it, please give it a star :wink:
 
 ## Setup
 
