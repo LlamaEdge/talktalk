@@ -79,4 +79,4 @@
 
 ## Future Plan
 
-TalkTalk is using `gtts` for text-to-speech conversion. In the next step, it will be replaced by [LlamaEdge-TTS API Server](https://github.com/LlamaEdge/tts-api-server).
+*TalkTalk* is using `gtts` for text-to-speech conversion. In the next step, it will be replaced by [LlamaEdge-TTS API Server](https://github.com/LlamaEdge/tts-api-server).
