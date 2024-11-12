@@ -1,4 +1,4 @@
-# TalkTalk(唠嗑) Demo
+# TalkTalk (唠嗑)
 
 ## Setup
 
