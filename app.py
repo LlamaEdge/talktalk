@@ -4,6 +4,7 @@ import re
 import tempfile
 from pathlib import Path
 
+import librosa
 import openai
 import requests
 import soundfile as sf
@@ -29,6 +30,39 @@ client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 
 def process_audio(audio_file):
+    print(f"Processing audio file: {audio_file}")
+
+    # Check and resample if needed
+    TARGET_SAMPLE_RATE = 16000
+
+    # Load audio with librosa (automatically handles different formats)
+    data, current_sample_rate = librosa.load(
+        audio_file, sr=None
+    )  # sr=None preserves original sample rate
+    print(f"Original sample rate: {current_sample_rate} Hz")
+
+    if current_sample_rate != TARGET_SAMPLE_RATE:
+        print(f"Resampling from {current_sample_rate} Hz to {TARGET_SAMPLE_RATE} Hz")
+        # High-quality resampling using librosa
+        data = librosa.resample(
+            y=data,
+            orig_sr=current_sample_rate,
+            target_sr=TARGET_SAMPLE_RATE,
+            res_type="kaiser_best",  # Highest quality resampling
+        )
+
+        # Normalize audio to prevent clipping
+        data = librosa.util.normalize(data)
+
+        # Save as 32-bit float WAV for better quality
+        temp_wav = tempfile.NamedTemporaryFile(delete=False, suffix=".wav")
+        sf.write(
+            temp_wav.name,
+            data,
+            TARGET_SAMPLE_RATE,
+        )
+        audio_file = temp_wav.name
+
     # Step 1: Transcribe audio to text using whisper-api-server transcriptions api
     url = "http://localhost:10086/v1/audio/transcriptions"
 
@@ -43,6 +77,9 @@ def process_audio(audio_file):
     user_message = re.sub(r"\[.*?\]\s*", "", response["text"])
 
     print(f"Transcribed text: {user_message}")
+
+    if "temp_wav" in locals():
+        os.unlink(temp_wav.name)
 
     # Step 2: Generate response using llama-api-server chat completions api
     url = "http://localhost:10086/v1/chat/completions"
@@ -98,7 +135,7 @@ def process_audio(audio_file):
 # Define Gradio interface
 iface = gr.Interface(
     fn=process_audio,
-    inputs=gr.Audio(type="filepath"),
+    inputs=gr.Audio(type="filepath", format="wav"),
     outputs=[
         gr.Audio(type="filepath", label="AI Response"),
         gr.Textbox(label="Me"),
