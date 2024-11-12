@@ -150,15 +150,19 @@ with gr.Blocks() as iface:
     )
 
     with gr.Row():
-        audio_input = gr.Audio(
-            sources=["microphone", "upload"], type="filepath", label="Audio Input"
-        )
+        with gr.Column():
+            audio_input = gr.Audio(
+                sources=["microphone", "upload"],
+                type="filepath",
+                label="Me",
+            )
+        with gr.Column():
+            audio_output = gr.Audio(type="filepath", label="TalkTalk AI")
 
     with gr.Row():
-        submit_btn = gr.Button("Process Audio")
+        submit_btn = gr.Button("Submit")
 
     with gr.Row():
-        audio_output = gr.Audio(type="filepath", label="AI Response")
         user_text = gr.Textbox(label="Me")
         ai_text = gr.Textbox(label="TalkTalk AI")
 
@@ -167,19 +171,6 @@ with gr.Blocks() as iface:
         inputs=[audio_input, api_url],
         outputs=[audio_output, user_text, ai_text],
     )
-
-# # Define Gradio interface
-# iface = gr.Interface(
-#     fn=process_audio,
-#     inputs=gr.Audio(type="filepath", format="wav"),
-#     outputs=[
-#         gr.Audio(type="filepath", label="AI Response"),
-#         gr.Textbox(label="Me"),
-#         gr.Textbox(label="TalkTalk AI"),
-#     ],
-#     title="AI Conversation Demo",
-#     description="Upload an audio file to get an AI response in both audio and text format.",
-# )
 
 # Launch Gradio app
 if __name__ == "__main__":
