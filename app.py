@@ -29,8 +29,9 @@ import gradio as gr
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 
-def process_audio(audio_file):
+def process_audio(audio_file, api_url):
     print(f"Processing audio file: {audio_file}")
+    print(f"Using API URL: {api_url}")
 
     # Check and resample if needed
     TARGET_SAMPLE_RATE = 16000
@@ -64,14 +65,14 @@ def process_audio(audio_file):
         audio_file = temp_wav.name
 
     # Step 1: Transcribe audio to text using whisper-api-server transcriptions api
-    url = "http://localhost:10086/v1/audio/transcriptions"
+    whisper_url = f"{api_url.rstrip('/')}/v1/audio/transcriptions"
 
     # 构造请求的数据
     files = {"file": open(audio_file, "rb")}
     data = {"language": "zh"}
 
     # 发送 POST 请求
-    response = requests.post(url, files=files, data=data).json()
+    response = requests.post(whisper_url, files=files, data=data).json()
 
     # 使用正则表达式提取时间戳后的内容
     user_message = re.sub(r"\[.*?\]\s*", "", response["text"])
@@ -82,7 +83,7 @@ def process_audio(audio_file):
         os.unlink(temp_wav.name)
 
     # Step 2: Generate response using llama-api-server chat completions api
-    url = "http://localhost:10086/v1/chat/completions"
+    chat_url = f"{api_url.rstrip('/')}/v1/chat/completions"
     headers = {"Content-Type": "application/json"}
 
     # 构造请求的 JSON 数据
@@ -100,7 +101,9 @@ def process_audio(audio_file):
     }
 
     # 发送 POST 请求
-    chat_completion_response = requests.post(url, headers=headers, json=data).json()
+    chat_completion_response = requests.post(
+        chat_url, headers=headers, json=data
+    ).json()
     assistant_message = chat_completion_response["choices"][0]["message"]["content"]
 
     # 打印响应内容
@@ -133,17 +136,50 @@ def process_audio(audio_file):
 
 
 # Define Gradio interface
-iface = gr.Interface(
-    fn=process_audio,
-    inputs=gr.Audio(type="filepath", format="wav"),
-    outputs=[
-        gr.Audio(type="filepath", label="AI Response"),
-        gr.Textbox(label="Me"),
-        gr.Textbox(label="TalkTalk AI"),
-    ],
-    title="AI Conversation Demo",
-    description="Upload an audio file to get an AI response in both audio and text format.",
-)
+with gr.Blocks() as iface:
+    gr.Markdown("# AI Conversation Demo")
+    gr.Markdown(
+        "Upload an audio file or record using your microphone to get an AI response in both audio and text format."
+    )
+
+    api_url = gr.Textbox(
+        label="LlamaEdge API Server URL",
+        placeholder="http://localhost:10086",
+        value="http://localhost:10086",
+        info="Enter the URL of your LlamaEdge API server",
+    )
+
+    with gr.Row():
+        audio_input = gr.Audio(
+            sources=["microphone", "upload"], type="filepath", label="Audio Input"
+        )
+
+    with gr.Row():
+        submit_btn = gr.Button("Process Audio")
+
+    with gr.Row():
+        audio_output = gr.Audio(type="filepath", label="AI Response")
+        user_text = gr.Textbox(label="Me")
+        ai_text = gr.Textbox(label="TalkTalk AI")
+
+    submit_btn.click(
+        fn=process_audio,
+        inputs=[audio_input, api_url],
+        outputs=[audio_output, user_text, ai_text],
+    )
+
+# # Define Gradio interface
+# iface = gr.Interface(
+#     fn=process_audio,
+#     inputs=gr.Audio(type="filepath", format="wav"),
+#     outputs=[
+#         gr.Audio(type="filepath", label="AI Response"),
+#         gr.Textbox(label="Me"),
+#         gr.Textbox(label="TalkTalk AI"),
+#     ],
+#     title="AI Conversation Demo",
+#     description="Upload an audio file to get an AI response in both audio and text format.",
+# )
 
 # Launch Gradio app
 if __name__ == "__main__":
