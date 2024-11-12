@@ -1,5 +1,8 @@
 # TalkTalk (唠嗑)
 
+> [!NOTE]
+> This project is for experimental purposes.
+
 ## Setup
 
 ### Deploy API Servers
