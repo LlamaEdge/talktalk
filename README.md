@@ -76,3 +76,7 @@
 ## Talk with TalkTalk
 
   [![TalkTalk Demo](https://img.youtube.com/vi/NFpLShcT7NM/0.jpg)](https://youtu.be/NFpLShcT7NM)
+
+## Future Plan
+
+TalkTalk is using `gtts` for text-to-speech conversion. In the next step, it will be replaced by [LlamaEdge-TTS API Server](https://github.com/LlamaEdge/tts-api-server).
