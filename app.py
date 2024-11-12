@@ -1,4 +1,6 @@
+import json
 import os
+import re
 import tempfile
 from pathlib import Path
 
@@ -35,47 +37,62 @@ def process_audio(audio_file):
     data = {"language": "zh"}
 
     # 发送 POST 请求
-    response = requests.post(url, files=files, data=data)
+    response = requests.post(url, files=files, data=data).json()
+
+    # 使用正则表达式提取时间戳后的内容
+    user_message = re.sub(r"\[.*?\]\s*", "", response["text"])
+
+    print(f"Transcribed text: {user_message}")
+
+    # Step 2: Generate response using llama-api-server chat completions api
+    url = "http://localhost:10086/v1/chat/completions"
+    headers = {"Content-Type": "application/json"}
+
+    # 构造请求的 JSON 数据
+    data = {
+        "context_window": 2,
+        "messages": [
+            {"role": "system", "content": "You are a helpful assistant."},
+            {
+                "role": "user",
+                "content": user_message,
+            },
+        ],
+        "model": "Qwen2.5-3B-Instruct",
+        "stream": False,
+    }
+
+    # 发送 POST 请求
+    chat_completion_response = requests.post(url, headers=headers, json=data).json()
+    assistant_message = chat_completion_response["choices"][0]["message"]["content"]
 
     # 打印响应内容
-    print(response.text)
+    print(f"AI Response: {assistant_message}")
 
-    # # Step 2: Generate response using llama-api-server chat completions api
-    # url = "http://localhost:10086/v1/chat/completions"
-    # headers = {"Content-Type": "application/json"}
-
-    # # 构造请求的 JSON 数据
-    # data = {
-    #     "context_window": 2,
-    #     "messages": [
-    #         {"role": "system", "content": "You are a helpful assistant."},
-    #         {
-    #             "role": "user",
-    #             "content": "What is the location of Paris, France along the Seine river?",
-    #         },
-    #     ],
-    #     "model": "Llama-3.2-3B-Instruct",
-    #     "stream": False,
-    # }
-
-    # # 发送 POST 请求
-    # chat_completion_response = requests.post(url, headers=headers, json=data)
-
-    # # 打印响应内容
-    # print(chat_completion_response.text)
-
-    # # Step 3: Convert response text to speech using OpenAI TTS
+    # Step 3: Convert response text to speech using OpenAI TTS
     # speech_response = client.audio.speech.create(
     #     model="tts-1", voice="alloy", input=chat_completion_response.text
     # )
 
     # Save the audio response
-    output_file = "response_audio.wav"
+    # output_file = "response_audio.wav"
     # with open(output_file, "wb") as f:
-    #     f.write(speech_response.content)
+    #     f.write(assistant_message)
 
-    # return output_file, chat_completion_response.text, response.text
-    return output_file, "Not available chat completion", response.text
+    # Step 3: Convert response text to speech using gTTS
+    tts = gTTS(
+        text=assistant_message, lang="zh"
+    )  # 'zh' for Chinese, use 'en' for English
+
+    # Save the audio response to a temporary file
+    output_file = "response_audio.wav"
+    tts.save(output_file)
+
+    return (
+        output_file,
+        user_message,
+        assistant_message,
+    )
 
 
 # Define Gradio interface
@@ -84,8 +101,8 @@ iface = gr.Interface(
     inputs=gr.Audio(type="filepath"),
     outputs=[
         gr.Audio(type="filepath", label="AI Response"),
-        gr.Textbox(label="Transcribed Text"),
-        gr.Textbox(label="AI Response Text"),
+        gr.Textbox(label="Me"),
+        gr.Textbox(label="TalkTalk AI"),
     ],
     title="AI Conversation Demo",
     description="Upload an audio file to get an AI response in both audio and text format.",
