@@ -142,3 +142,7 @@ curl -X POST http://localhost:$proxy_port/admin/register/whisper -d "http://loca
 printf "\n\n"
 
 info "[+] Done!"
+
+info ">>> To stop the servers, run 'pkill -f wasmedge'."
+
+exit 0
