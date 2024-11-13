@@ -19,7 +19,7 @@ cd talktalk
   ./deploy_llamaedge_macos.sh --proxy-port 10086 --llama-port 12345 --whisper-port 12306
   ```
 
-  The default ports for `llama-proxy-server`, `llama-api-server` and `whisper-api-server` are `10086`, `12345` and `12306`. You can change them by using the `--proxy-port`, `--llama-port` and `--whisper-port` options.
+  The default ports for `llama-proxy-server`, `llama-api-server` and `whisper-api-server` are `10086`, `12345` and `12306`, respectively. You can change them by using the `--proxy-port`, `--llama-port` and `--whisper-port` options.
 
 - Install dependencies and start TalkTalk App
 
