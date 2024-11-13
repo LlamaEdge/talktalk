@@ -10,7 +10,7 @@ git clone https://github.com/LlamaEdge/talktalk.git
 cd talktalk
 ```
 
-- Deploy LlamaEdge API Servers on MacOS
+- Deploy LlamaEdge API Servers on MacOS (Apple Silicon)
 
   ```bash
   ./deploy_llamaedge_macos.sh --proxy-port 10086 --llama-port 12345 --whisper-port 12306
