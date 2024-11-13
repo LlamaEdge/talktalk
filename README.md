@@ -24,6 +24,10 @@ cd talktalk
 - Install dependencies and start TalkTalk App
 
   ```bash
+  # Optional: create a new virtual environment with conda or other tools
+  conda create -n talktalk python=3.11
+  conda activate talktalk
+
   # Install dependencies
   pip install -r requirements.txt
 
