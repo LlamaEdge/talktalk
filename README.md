@@ -22,7 +22,7 @@ cd talktalk
   The default ports for `llama-proxy-server`, `llama-api-server` and `whisper-api-server` are `10086`, `12345` and `12306`, respectively. You can change them by using the `--proxy-port`, `--llama-port` and `--whisper-port` options.
 
   <details>
-  <summary>For those who want to deploy servers step by step:</summary>
+  <summary>For those who want to deploy servers step by step manually:</summary>
 
   - Install WasmEdge Runtime
 
