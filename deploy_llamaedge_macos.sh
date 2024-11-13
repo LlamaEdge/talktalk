@@ -80,7 +80,7 @@ info "[+] Installing WasmEdge Runtime..."
 curl -sSf https://raw.githubusercontent.com/WasmEdge/WasmEdge/master/utils/install_v2.sh | bash -s -- -v 0.14.1
 printf "\n\n"
 
-info "[+] Create api-server directory..."
+info "[+] Create api-server directory in the current directory"
 if [ -d "api-server" ]; then
     warning "    * api-server directory already exists. Remove it? (y/n)"
     read -r answer
