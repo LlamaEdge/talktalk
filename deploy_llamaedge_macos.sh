@@ -4,13 +4,21 @@
 # curl -sSf https://raw.githubusercontent.com/WasmEdge/WasmEdge/master/utils/install_v2.sh | bash -s -- -v 0.14.1
 
 echo "Downloading LlamaEdge API Server and model..."
-curl -LO https://github.com/LlamaEdge/LlamaEdge/releases/download/0.14.15/llama-api-server.wasm
-curl -LO https://huggingface.co/second-state/Qwen2.5-3B-Instruct-GGUF/resolve/main/Qwen2.5-3B-Instruct-Q5_K_M.gguf
+curl -LO# https://github.com/LlamaEdge/LlamaEdge/releases/download/0.14.15/llama-api-server.wasm
+if [ ! -f Qwen2.5-3B-Instruct-Q5_K_M.gguf ]; then
+    curl -LO https://huggingface.co/second-state/Qwen2.5-3B-Instruct-GGUF/resolve/main/Qwen2.5-3B-Instruct-Q5_K_M.gguf
+fi
 
-echo "Downloading Whisper model and plugin..."
-curl -LO https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-medium.bin
+echo "Downloading LlamaEdge-Whisper API Server, Whisper model and plugin..."
+curl -LO# https://github.com/LlamaEdge/whisper-api-server/releases/download/0.3.2/whisper-api-server.wasm
+if [ ! -f ggml-medium.bin ]; then
+    curl -LO# https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-medium.bin
+fi
+if [ -d "wasmedge-whisper/plugin" ]; then
+    rm -rf wasmedge-whisper/plugin
+fi
 mkdir -p wasmedge-whisper/plugin
-curl -LO https://github.com/WasmEdge/WasmEdge/releases/download/0.14.1/WasmEdge-plugin-wasi_nn-whisper-0.14.1-darwin_arm64.tar.gz
+curl -LO# https://github.com/WasmEdge/WasmEdge/releases/download/0.14.1/WasmEdge-plugin-wasi_nn-whisper-0.14.1-darwin_arm64.tar.gz
 tar -xzf WasmEdge-plugin-wasi_nn-whisper-0.14.1-darwin_arm64.tar.gz -C wasmedge-whisper/plugin
 rm WasmEdge-plugin-wasi_nn-whisper-0.14.1-darwin_arm64.tar.gz
 
