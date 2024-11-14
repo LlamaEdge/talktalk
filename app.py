@@ -4,14 +4,13 @@ import re
 import tempfile
 from pathlib import Path
 
+import gradio as gr
 import librosa
 import openai
 import requests
 import soundfile as sf
 from gtts import gTTS
 from openai import OpenAI
-
-import gradio as gr
 
 # The workflow is now:
 # 1. User uploads an audio file
@@ -174,4 +173,4 @@ with gr.Blocks() as iface:
 
 # Launch Gradio app
 if __name__ == "__main__":
-    iface.launch()
+    iface.launch(share=True)
