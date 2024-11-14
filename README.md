@@ -99,7 +99,8 @@ cd talktalk
 
 ## Talk with TalkTalk
 
-  [![TalkTalk Demo](https://img.youtube.com/vi/NFpLShcT7NM/0.jpg)](https://youtu.be/NFpLShcT7NM)
+* A person speakimg Chinese: https://youtu.be/NFpLShcT7NM
+* A person speaking English: https://twitter.com/juntao/status/1857133856144621840
 
 ## Future Plan
 
