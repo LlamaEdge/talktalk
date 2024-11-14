@@ -69,7 +69,7 @@ def process_audio(audio_file, api_url):
 
     # 构造请求的数据
     files = {"file": open(audio_file, "rb")}
-    data = {"language": "zh"}
+    data = {"language": "en"}
 
     # 发送 POST 请求
     response = requests.post(whisper_url, files=files, data=data).json()

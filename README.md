@@ -91,6 +91,8 @@ cd talktalk
   pip install -r requirements.txt
 
   # Start TalkTalk App
+  export OPENAI_API_KEY="GAIA"
+  export GRADIO_SHARE=True
   python app.py
   ```
 
