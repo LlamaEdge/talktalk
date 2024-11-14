@@ -89,13 +89,13 @@ def process_audio(audio_file, api_url):
     data = {
         "context_window": 2,
         "messages": [
-            {"role": "system", "content": "You are a helpful assistant."},
+            {"role": "system", "content": "You are a helpful assistant. Please be concise and give very short answers."},
             {
                 "role": "user",
                 "content": user_message,
             },
         ],
-        "model": "Qwen2.5-3B-Instruct",
+        "model": "llama",
         "stream": False,
     }
 
