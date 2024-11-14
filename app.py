@@ -100,7 +100,7 @@ def process_audio(audio_file, api_url, input_language):
                 "content": user_message,
             },
         ],
-        "model": "Qwen2.5-3B-Instruct",
+        "model": "llama",
         "stream": False,
     }
 

@@ -94,8 +94,8 @@ mkdir -p api-server
 
 info "[+] Downloading LlamaEdge API Server and model..."
 curl -LO# https://github.com/LlamaEdge/LlamaEdge/releases/download/0.14.15/llama-api-server.wasm
-if [ ! -f Qwen2.5-3B-Instruct-Q5_K_M.gguf ]; then
-    curl -LO https://huggingface.co/second-state/Qwen2.5-3B-Instruct-GGUF/resolve/main/Qwen2.5-3B-Instruct-Q5_K_M.gguf
+if [ ! -f Llama-3.2-3B-Instruct-Q5_K_M.gguf ]; then
+    curl -LO https://huggingface.co/second-state/Llama-3.2-3B-Instruct-GGUF/resolve/main/Llama-3.2-3B-Instruct-Q5_K_M.gguf
 fi
 printf "\n\n"
 
@@ -119,10 +119,10 @@ printf "\n\n"
 
 info "[+] Starting servers in background..."
 # Start LlamaEdge API Server
-wasmedge --dir .:. --nn-preload default:GGML:AUTO:Qwen2.5-3B-Instruct-Q5_K_M.gguf \
+wasmedge --dir .:. --nn-preload default:GGML:AUTO:Llama-3.2-3B-Instruct-Q5_K_M.gguf \
   llama-api-server.wasm \
-  --model-name Qwen2.5-3B-Instruct \
-  --prompt-template chatml \
+  --model-name llama \
+  --prompt-template llama-3-chat \
   --ctx-size 32000 \
   --port $llama_port &
 
