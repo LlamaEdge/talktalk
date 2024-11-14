@@ -28,9 +28,10 @@ from openai import OpenAI
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 
-def process_audio(audio_file, api_url):
+def process_audio(audio_file, api_url, input_language):
     print(f"Processing audio file: {audio_file}")
     print(f"Using API URL: {api_url}")
+    print(f"Input language: {input_language}")
 
     # Check and resample if needed
     TARGET_SAMPLE_RATE = 16000
@@ -64,11 +65,12 @@ def process_audio(audio_file, api_url):
         audio_file = temp_wav.name
 
     # Step 1: Transcribe audio to text using whisper-api-server transcriptions api
+    print(f"Transcribing audio to text")
     whisper_url = f"{api_url.rstrip('/')}/v1/audio/transcriptions"
 
     # 构造请求的数据
     files = {"file": open(audio_file, "rb")}
-    data = {"language": "en"}
+    data = {"language": input_language}
 
     # 发送 POST 请求
     response = requests.post(whisper_url, files=files, data=data).json()
@@ -82,14 +84,17 @@ def process_audio(audio_file, api_url):
         os.unlink(temp_wav.name)
 
     # Step 2: Generate response using llama-api-server chat completions api
+    print(f"Generating chat completions")
     chat_url = f"{api_url.rstrip('/')}/v1/chat/completions"
     headers = {"Content-Type": "application/json"}
 
     # 构造请求的 JSON 数据
     data = {
-        "context_window": 2,
         "messages": [
-            {"role": "system", "content": "You are a helpful assistant."},
+            {
+                "role": "system",
+                "content": "You are a helpful AI assistant. You should answer questions as precisely and concisely as possible. The answer should be suitable for speech playback, not for reading.",
+            },
             {
                 "role": "user",
                 "content": user_message,
@@ -119,11 +124,11 @@ def process_audio(audio_file, api_url):
     #     f.write(assistant_message)
 
     # Step 3: Convert response text to speech using gTTS
-    tts = gTTS(
-        text=assistant_message, lang="en"
-    )  # 'zh' for Chinese, use 'en' for English
+    print(f"Converting response text to speech using gTTS in {input_language} language")
+    tts = gTTS(text=assistant_message, lang=input_language)
 
     # Save the audio response to a temporary file
+    print(f"Saving audio response")
     output_file = "response_audio.wav"
     tts.save(output_file)
 
@@ -141,12 +146,19 @@ with gr.Blocks() as iface:
         "Upload an audio file or record using your microphone to get an AI response in both audio and text format."
     )
 
-    api_url = gr.Textbox(
-        label="LlamaEdge API Server URL",
-        placeholder="http://localhost:10086",
-        value="http://localhost:10086",
-        info="Enter the URL of your LlamaEdge API server",
-    )
+    with gr.Row():
+        api_url = gr.Textbox(
+            label="LlamaEdge API Server URL",
+            placeholder="http://localhost:10086",
+            value="http://localhost:10086",
+            info="Enter the URL of your LlamaEdge API server",
+        )
+        input_language = gr.Dropdown(
+            choices=["en", "zh", "ja"],
+            value="en",
+            label="Input Audio Language",
+            info="Select the language of your input audio",
+        )
 
     with gr.Row():
         with gr.Column():
@@ -167,7 +179,7 @@ with gr.Blocks() as iface:
 
     submit_btn.click(
         fn=process_audio,
-        inputs=[audio_input, api_url],
+        inputs=[audio_input, api_url, input_language],
         outputs=[audio_output, user_text, ai_text],
     )
 
