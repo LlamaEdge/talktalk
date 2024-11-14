@@ -120,7 +120,7 @@ def process_audio(audio_file, api_url):
 
     # Step 3: Convert response text to speech using gTTS
     tts = gTTS(
-        text=assistant_message, lang="zh"
+        text=assistant_message, lang="en"
     )  # 'zh' for Chinese, use 'en' for English
 
     # Save the audio response to a temporary file
