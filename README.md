@@ -18,6 +18,7 @@ cd talktalk
   # or, specify the ports
   ./deploy_llamaedge_macos.sh --proxy-port 10086 --llama-port 12345 --whisper-port 12306
   ```
+  > Use the `deploy_llamaedge_linux_x86_cuda12.sh` script for Linux machines with Nvidia GPUs and CUDA 12 drivers. 
 
   The default ports for `llama-proxy-server`, `llama-api-server` and `whisper-api-server` are `10086`, `12345` and `12306`, respectively. You can change them by using the `--proxy-port`, `--llama-port` and `--whisper-port` options.
 
@@ -91,11 +92,10 @@ cd talktalk
   pip install -r requirements.txt
 
   # Start TalkTalk App
-  export OPENAI_API_KEY="GAIA"
   python app.py
   ```
 
-  If the app is running, you can visit http://127.0.0.1:7860 to use the app.
+  If the app is running, you can visit `http://127.0.0.1:7860` or the `gradio.live` public URL to use the app.
 
 ## Talk with TalkTalk
 
