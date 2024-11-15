@@ -101,8 +101,8 @@ printf "\n\n"
 
 info "[+] Downloading LlamaEdge-Whisper API Server, Whisper model and plugin..."
 curl -LO# https://github.com/LlamaEdge/whisper-api-server/releases/download/0.3.2/whisper-api-server.wasm
-if [ ! -f ggml-medium.bin ]; then
-    curl -LO# https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-medium.bin
+if [ ! -f ggml-large-v2-q5_0.bin ]; then
+    curl -LO# https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-large-v2-q5_0.bin
 fi
 if [ -d "wasmedge-whisper/plugin" ]; then
     rm -rf wasmedge-whisper/plugin
@@ -127,7 +127,7 @@ wasmedge --dir .:. --nn-preload default:GGML:AUTO:Llama-3.2-3B-Instruct-Q5_K_M.g
   --port $llama_port &
 
 # Start Whisper API Server
-WASMEDGE_PLUGIN_PATH=$(pwd)/wasmedge-whisper/plugin wasmedge --dir .:. whisper-api-server.wasm -m ggml-medium.bin --task transcribe --port $whisper_port &
+WASMEDGE_PLUGIN_PATH=$(pwd)/wasmedge-whisper/plugin wasmedge --dir .:. whisper-api-server.wasm -m ggml-large-v2-q5_0.bin --task transcribe --port $whisper_port &
 
 # Start Proxy Server
 wasmedge llama-proxy-server.wasm --port $proxy_port &
