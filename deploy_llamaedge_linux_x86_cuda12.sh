@@ -127,7 +127,7 @@ wasmedge --dir .:. --nn-preload default:GGML:AUTO:Llama-3.2-3B-Instruct-Q5_K_M.g
   --port $llama_port &
 
 # Start Whisper API Server
-WASMEDGE_PLUGIN_PATH=$(pwd)/wasmedge-whisper/plugin wasmedge --dir .:. whisper-api-server.wasm -m ggml-medium.bin --port $whisper_port &
+WASMEDGE_PLUGIN_PATH=$(pwd)/wasmedge-whisper/plugin wasmedge --dir .:. whisper-api-server.wasm -m ggml-medium.bin --task transcribe --port $whisper_port &
 
 # Start Proxy Server
 wasmedge llama-proxy-server.wasm --port $proxy_port &
