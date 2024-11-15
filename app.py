@@ -25,7 +25,7 @@ from openai import OpenAI
 
 
 # Initialize OpenAI client
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+client = OpenAI(api_key="GAIA")
 
 
 def process_audio(audio_file, api_url, input_language):
