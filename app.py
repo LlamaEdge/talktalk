@@ -70,7 +70,7 @@ def process_audio(audio_file, api_url, input_language):
 
     # 构造请求的数据
     files = {"file": open(audio_file, "rb")}
-    data = {"language": input_language}
+    data = {"language": input_language, "max_len": 1000, "split_on_word": "true"}
 
     # 发送 POST 请求
     response = requests.post(whisper_url, files=files, data=data).json()
