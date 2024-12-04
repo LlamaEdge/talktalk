@@ -33,55 +33,39 @@ def process_audio(audio_file, api_url, input_language):
     print(f"Using API URL: {api_url}")
     print(f"Input language: {input_language}")
 
-    # Check and resample if needed
-    TARGET_SAMPLE_RATE = 16000
-
-    # Load audio with librosa (automatically handles different formats)
-    data, current_sample_rate = librosa.load(
-        audio_file, sr=None
-    )  # sr=None preserves original sample rate
-    print(f"Original sample rate: {current_sample_rate} Hz")
-
-    if current_sample_rate != TARGET_SAMPLE_RATE:
-        print(f"Resampling from {current_sample_rate} Hz to {TARGET_SAMPLE_RATE} Hz")
-        # High-quality resampling using librosa
-        data = librosa.resample(
-            y=data,
-            orig_sr=current_sample_rate,
-            target_sr=TARGET_SAMPLE_RATE,
-            res_type="kaiser_best",  # Highest quality resampling
-        )
-
-        # Normalize audio to prevent clipping
-        data = librosa.util.normalize(data)
-
-        # Save as 32-bit float WAV for better quality
-        temp_wav = tempfile.NamedTemporaryFile(delete=False, suffix=".wav")
-        sf.write(
-            temp_wav.name,
-            data,
-            TARGET_SAMPLE_RATE,
-        )
-        audio_file = temp_wav.name
-
     # Step 1: Transcribe audio to text using whisper-api-server transcriptions api
     print(f"Transcribing audio to text")
     whisper_url = f"{api_url.rstrip('/')}/v1/audio/transcriptions"
 
     # 构造请求的数据
     files = {"file": open(audio_file, "rb")}
-    data = {"language": input_language, "max_len": 1000, "split_on_word": "true"}
+    data = {
+        "language": input_language,
+        "max_len": 100,
+        "split_on_word": "true",
+        "max_context": 200,
+    }
 
     # 发送 POST 请求
     response = requests.post(whisper_url, files=files, data=data).json()
 
-    # 使用正则表达式提取时间戳后的内容
-    user_message = re.sub(r"\[.*?\]\s*", "", response["text"])
+    # # 使用正则表达式提取时间戳后的内容
+    # user_message = re.sub(r"\[.*?\]\s*", "", response["text"])
+
+    # 去掉时间戳
+    processed_text = re.sub(r"\[.*?\]\s*", "", response["text"])
+
+    # 去掉非空白字符之间的换行符，但处理标点符号场景
+    transcribed_text = re.sub(
+        r"(?<=[^\s.,!?])\n(?=[^\s.,!?])",
+        "",  # 换行前后都不是标点符号或空白时去掉换行
+        processed_text,
+    )
+
+    # 可选：清理首尾多余的空格或换行符
+    user_message = transcribed_text.strip()
 
     print(f"Transcribed text: {user_message}")
-
-    if "temp_wav" in locals():
-        os.unlink(temp_wav.name)
 
     # Step 2: Generate response using llama-api-server chat completions api
     print(f"Generating chat completions")
