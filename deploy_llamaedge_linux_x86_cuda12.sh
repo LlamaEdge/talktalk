@@ -143,6 +143,6 @@ printf "\n\n"
 
 info "[+] Done!"
 
-info ">>> To stop the servers, run 'pkill -f wasmedge'."
+info ">>> To stop the servers, run 'pkill -f wasmedge' command in your terminal app."
 
 exit 0
